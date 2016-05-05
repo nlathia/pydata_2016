@@ -19,9 +19,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        accelerometer = Accelerometer.getInstance();
+        accelerometer = Accelerometer.getInstance(this);
         sensingButton = (Button) findViewById(R.id.sensingButton);
         setRecyclerView();
+        LabelPreferences.clear(this);
     }
 
     @Override

@@ -1,22 +1,37 @@
 package lathia.accelerometercollector;
 
-public class Accelerometer
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.util.Log;
+
+public class Accelerometer implements SensorEventListener
 {
+    /*
+    http://developer.android.com/guide/topics/sensors/sensors_motion.html#sensors-motion-accel
+     */
+
     private static Accelerometer instance;
 
-    public static Accelerometer getInstance()
+    public static Accelerometer getInstance(final Context context)
     {
         if (instance == null)
         {
-            instance = new Accelerometer();
+            instance = new Accelerometer(context);
         }
         return instance;
     }
 
+    private SensorManager mSensorManager;
+    private Sensor mSensor;
     private boolean isSensing;
 
-    protected Accelerometer()
+    protected Accelerometer(final Context context)
     {
+        this.mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        this.mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         this.isSensing = false;
     }
 
@@ -26,8 +41,29 @@ public class Accelerometer
     }
 
     public void start()
-    {}
+    {
+        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
+        isSensing = true;
+    }
 
     public void stop()
-    {}
+    {
+        mSensorManager.unregisterListener(this);
+        isSensing = false;
+    }
+
+    @Override
+    public final void onAccuracyChanged(Sensor sensor, int accuracy)
+    {
+        // Do something here if sensor accuracy changes.
+    }
+
+    @Override
+    public final void onSensorChanged(SensorEvent event)
+    {
+        float xAxis = event.values[0];
+        float yAxis = event.values[1];
+        float zAxis = event.values[2];
+        Log.d("Accelerometer", xAxis+", "+yAxis+", "+zAxis);
+    }
 }
