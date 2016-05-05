@@ -45,7 +45,7 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.ViewHolder>
             {
                 TextView textView = (TextView) view;
                 String activity = textView.getText().toString();
-                // Store label
+                LabelPreferences.setLabel(context, activity);
                 Toast.makeText(context, SELECTED + activity, Toast.LENGTH_LONG).show();
             }
         });

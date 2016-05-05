@@ -6,9 +6,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
 {
+    private Accelerometer accelerometer;
     private Button sensingButton;
 
     @Override
@@ -17,6 +19,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        accelerometer = Accelerometer.getInstance();
         sensingButton = (Button) findViewById(R.id.sensingButton);
         setRecyclerView();
         setButton();
@@ -39,11 +42,38 @@ public class MainActivity extends AppCompatActivity
 
     private void setButton()
     {
-        sensingButton.setText(R.string.sensing_start);
+        if (!accelerometer.isSensing())
+        {
+            sensingButton.setText(R.string.sensing_start);
+        }
+        else
+        {
+            sensingButton.setText(R.string.sensing_stop);
+        }
+    }
+
+    private boolean labelSet()
+    {
+        return LabelPreferences.getLabel(this) != null;
     }
 
     public void onSensingButtonClicked(final View view)
     {
+        if (!accelerometer.isSensing())
+        {
+            if (!labelSet())
+            {
+                Toast.makeText(this, "Please select an activity first.", Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                accelerometer.start();
+            }
+        }
+        else
+        {
+            accelerometer.stop();
+        }
         setButton();
     }
 }
