@@ -39,13 +39,18 @@ public class MainActivity extends AppCompatActivity
     {
         super.onPause();
         stopSensing();
-        LabelPreferences.clear(this);
     }
 
     private void startSensing()
     {
         if (!accelerometer.isSensing())
         {
+            if (LabelPreferences.getLabel(this) == null)
+            {
+                Toast.makeText(this, R.string.no_label, Toast.LENGTH_LONG).show();
+                return;
+            }
+
             try
             {
                 accelerometer.start(this);
@@ -60,6 +65,7 @@ public class MainActivity extends AppCompatActivity
 
     private void stopSensing()
     {
+        LabelPreferences.clear(this);
         if (accelerometer.isSensing())
         {
             try
@@ -73,7 +79,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-
 
     private void setRecyclerView()
     {
@@ -102,23 +107,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private boolean labelSet()
-    {
-        return LabelPreferences.getLabel(this) != null;
-    }
-
     public void onSensingButtonClicked(final View view)
     {
         if (!accelerometer.isSensing())
         {
-            if (!labelSet())
-            {
-                Toast.makeText(this, R.string.no_label, Toast.LENGTH_LONG).show();
-            }
-            else
-            {
-                startSensing();
-            }
+            startSensing();
         }
         else
         {
