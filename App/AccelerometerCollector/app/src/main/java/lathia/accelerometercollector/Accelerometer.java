@@ -7,12 +7,15 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
+import java.io.IOException;
+
 public class Accelerometer implements SensorEventListener
 {
     /*
     http://developer.android.com/guide/topics/sensors/sensors_motion.html#sensors-motion-accel
      */
 
+    private static final String LOG_TAG = "Accelerometer";
     private static Accelerometer instance;
 
     public static Accelerometer getInstance(final Context context)
@@ -26,6 +29,7 @@ public class Accelerometer implements SensorEventListener
 
     private SensorManager mSensorManager;
     private Sensor mSensor;
+    private DataWriter fileWriter;
     private boolean isSensing;
 
     protected Accelerometer(final Context context)
@@ -40,14 +44,16 @@ public class Accelerometer implements SensorEventListener
         return isSensing;
     }
 
-    public void start()
+    public void start(final Context context) throws IOException
     {
+        fileWriter = new DataWriter(context, LabelPreferences.getLabel(context));
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
         isSensing = true;
     }
 
-    public void stop()
+    public void stop() throws IOException
     {
+        fileWriter.finish();
         mSensorManager.unregisterListener(this);
         isSensing = false;
     }
@@ -61,9 +67,12 @@ public class Accelerometer implements SensorEventListener
     @Override
     public final void onSensorChanged(SensorEvent event)
     {
-        float xAxis = event.values[0];
-        float yAxis = event.values[1];
-        float zAxis = event.values[2];
-        Log.d("Accelerometer", xAxis+", "+yAxis+", "+zAxis);
+        try {
+            fileWriter.append(event);
+        }
+        catch (IOException e)
+        {
+            Log.d(LOG_TAG, e.getLocalizedMessage());
+        }
     }
 }

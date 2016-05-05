@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity
 {
     private Accelerometer accelerometer;
@@ -36,12 +38,42 @@ public class MainActivity extends AppCompatActivity
     protected void onPause()
     {
         super.onPause();
-        if (accelerometer.isSensing())
-        {
-            accelerometer.stop();
-        }
+        stopSensing();
         LabelPreferences.clear(this);
     }
+
+    private void startSensing()
+    {
+        if (!accelerometer.isSensing())
+        {
+            try
+            {
+                accelerometer.start(this);
+            }
+            catch (IOException e)
+            {
+                Toast.makeText(this, "IOException: didn't start.", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void stopSensing()
+    {
+        if (accelerometer.isSensing())
+        {
+            try
+            {
+                accelerometer.stop();
+            }
+            catch (IOException e)
+            {
+                Toast.makeText(this, "IOException: didn't start.", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     private void setRecyclerView()
     {
@@ -85,12 +117,12 @@ public class MainActivity extends AppCompatActivity
             }
             else
             {
-                accelerometer.start();
+                startSensing();
             }
         }
         else
         {
-            accelerometer.stop();
+            stopSensing();
         }
         setButton();
     }
