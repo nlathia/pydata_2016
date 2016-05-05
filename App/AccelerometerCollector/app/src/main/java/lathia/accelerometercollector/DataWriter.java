@@ -2,6 +2,8 @@ package lathia.accelerometercollector;
 
 import android.content.Context;
 import android.hardware.SensorEvent;
+import android.os.Environment;
+import android.util.Log;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,9 +17,20 @@ public class DataWriter
 
     public DataWriter(final Context context, final String activity) throws IOException
     {
-        File filesDir = context.getFilesDir();
-        dataFile = new File(filesDir, activity + "_" + System.currentTimeMillis() + ".csv");
+        dataFile = createFile(activity);
         writer = new BufferedWriter(new FileWriter(dataFile));
+
+        Log.d("DataWriter", "Writing to: "+dataFile.getAbsolutePath());
+    }
+
+    private File createFile(String activity)
+    {
+        File directory = new File(Environment.getExternalStorageDirectory(), "AccelerometerData");
+        if (!directory.exists())
+        {
+            directory.mkdirs();
+        }
+        return new File(directory, activity + "_" + System.currentTimeMillis() + ".csv");
     }
 
     public void append(SensorEvent event) throws IOException

@@ -73,6 +73,7 @@ public class Accelerometer implements SensorEventListener
         catch (IOException e)
         {
             Log.d(LOG_TAG, e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 }
