@@ -3,4 +3,5 @@
 
     <string name="sensing_start">Start Sensing</string>
     <string name="sensing_stop">Stop Sensing</string>
+    <string name="no_label">Please select an activity first.</string>
 </resources>

@@ -22,7 +22,24 @@ public class MainActivity extends AppCompatActivity
         accelerometer = Accelerometer.getInstance();
         sensingButton = (Button) findViewById(R.id.sensingButton);
         setRecyclerView();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
         setButton();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        if (accelerometer.isSensing())
+        {
+            accelerometer.stop();
+        }
+        LabelPreferences.clear(this);
     }
 
     private void setRecyclerView()
@@ -63,7 +80,7 @@ public class MainActivity extends AppCompatActivity
         {
             if (!labelSet())
             {
-                Toast.makeText(this, "Please select an activity first.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.no_label, Toast.LENGTH_LONG).show();
             }
             else
             {

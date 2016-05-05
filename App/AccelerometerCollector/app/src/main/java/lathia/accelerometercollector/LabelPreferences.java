@@ -26,4 +26,12 @@ public class LabelPreferences
         SharedPreferences prefs = getPreferences(context);
         return prefs.getString(KEY, null);
     }
+
+    public static void clear(Context context)
+    {
+        SharedPreferences prefs = getPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.commit();
+    }
 }
